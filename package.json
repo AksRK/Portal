@@ -1,0 +1,15 @@
+{
+  "name": "portal",
+  "version": "1.0.0",
+  "description": "",
+
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development concurrently \"npm run start:dev --prefix server \" \"npm run dev --prefix client\"",
+    "installAll": "npm install --prefix server && npm install --prefix client"
+  },
+
+  "dependencies": {
+    "concurrently": "^8.0.1",
+    "cross-env": "^7.0.3"
+  }
+}

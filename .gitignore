@@ -1,0 +1,11 @@
+# npm
+.idea
+node_modules
+*.log
+*.gz
+
+dist
+
+# Coveralls
+.nyc_output
+coverage
