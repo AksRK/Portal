@@ -7,9 +7,7 @@
     "installAll": "npm install --prefix server && npm install --prefix client"
   },
   "dependencies": {
-    "class-validator": "^0.14.0",
     "concurrently": "^8.0.1",
-    "cross-env": "^7.0.3",
-    "mongoose-unique-validator": "^3.1.0"
+    "cross-env": "^7.0.3"
   }
 }
