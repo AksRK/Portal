@@ -1,0 +1,23 @@
+.fixedWrp {
+  position: fixed;
+  width: 100%;
+  height: fit-content;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  z-index: 0;
+
+  &_header {
+    top: 0;
+  }
+
+  &_footer {
+    bottom: 0;
+  }
+
+  &_overflow {
+    opacity: 0;
+  }
+}

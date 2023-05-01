@@ -1,31 +1,44 @@
-import React, {FC, useContext, useState} from 'react';
-import {Context} from "@/pages/_app";
+import React, {FC, useContext, useEffect} from 'react';
 import {useRouter} from "next/router";
 import {observer} from "mobx-react-lite";
+import {Context} from "@/components/StoreProvider";
+import {useForm} from "react-hook-form";
+import {SignInFormDataProps} from "@/core/types/shared";
 
-const SignIn: any = () => {
+const SignIn: FC = () => {
 	const router = useRouter()
-	const [email, setEmail] = useState<string>('test@test.is')
-	const [password, setPassword] = useState<string>('123456')
 	const {store} = useContext(Context)
 	const adminPanelUrl = '/admin/panel'
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({defaultValues: {
+			'email': 'test@test.is',
+			'password': '123456'
+		}});
 
-
-	if (store.isAuth) {
-		router.push(adminPanelUrl)
-	}else {
-		return (
-			<div>
-				Login
-				<input type="text" value={email} onChange={(event)=> setEmail(event.target.value)}/>
-				<input type="text" value={password} onChange={(event)=> setPassword(event.target.value)}/>
-				<button onClick={()=> store.signin(email, password)}>
-					123
-				</button>
-			</div>
-		);
+	const signin = (data: SignInFormDataProps) => {
+		return store.authStore.signin(data)
 	}
 
+	useEffect(()=> {
+		if (localStorage.getItem('accessToken') && store.authStore.isAuth) {
+			router.push(adminPanelUrl)
+		}
+	},[store.authStore.isAuth])
+
+
+	if (store.authStore.isAuth && localStorage.getItem('accessToken')) {
+		return <></>
+	}
+	return (
+		<form onSubmit={handleSubmit(signin)}>
+			<input type="text" {...register("email", {required: true, maxLength: 80})}/>
+			<input type="text" {...register("password", {required: true, maxLength: 80})}/>
+			<input type="submit" value={'Отправить'}/>
+		</form>
+	);
 
 };
 

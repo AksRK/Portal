@@ -5,7 +5,6 @@ import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthDto } from './dto/auth.dto';
-import { Response} from 'express';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +31,7 @@ export class AuthService {
 		return tokens;
 	}
 
-	async signIn(data: AuthDto, res: Response) {
+	async signIn(data: AuthDto) {
 		const user = await this.usersService.findByEmail(data.email);
 		if (!user) throw new BadRequestException('User does not exist');
 		const passwordMatches = await argon2.verify(user.password, data.password);
@@ -40,7 +39,6 @@ export class AuthService {
 			throw new BadRequestException('Password is incorrect');
 		const tokens = await this.getTokens(user._id, user.email);
 		await this.updateRefreshToken(user._id, tokens.refreshToken);
-		res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: false })
 		return tokens;
 	}
 
@@ -68,7 +66,7 @@ export class AuthService {
 				},
 				{
 					secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-					expiresIn: '5s',
+					expiresIn: '15m',
 				},
 			),
 			this.jwtService.signAsync(
@@ -89,7 +87,7 @@ export class AuthService {
 		};
 	}
 
-	async refreshTokens(userId: string, refreshToken: string, res: Response) {
+	async refreshTokens(userId: string, refreshToken: string) {
 		const user = await this.usersService.findById(userId);
 		if (!user || !user.refreshToken)
 			throw new ForbiddenException('Access Denied');
@@ -100,7 +98,6 @@ export class AuthService {
 		if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
 		const tokens = await this.getTokens(user.id, user.email);
 		await this.updateRefreshToken(user.id, tokens.refreshToken);
-		res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: false })
 		return tokens;
 	}
 }

@@ -22,22 +22,16 @@ export class AuthController {
   }
 
   @Post('signin')
-  signin(
-      @Body() data: AuthDto,
-      @Res({ passthrough: true }) res: Response
-  ) {
-    return this.authService.signIn(data, res);
+  signin(@Body() data: AuthDto,) {
+    return this.authService.signIn(data);
   }
 
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
-  refreshTokens(
-      @Req() req: Request,
-      @Res({ passthrough: true }) res: Response
-  ) {
+  refreshTokens(@Req() req: Request,) {
     const userId = req.user['sub'];
-    const refreshToken = req.cookies['refreshToken'];
-    return this.authService.refreshTokens(userId, refreshToken, res);
+    const refreshToken = req.user['refreshToken'];
+    return this.authService.refreshTokens(userId, refreshToken);
   }
 
   @UseGuards(AccessTokenGuard)
