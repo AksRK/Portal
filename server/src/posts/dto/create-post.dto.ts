@@ -12,7 +12,7 @@ export class CreatePostDto {
 
 	creator?: string
 
-	viewsCount: number
+	viewsCount?: number
 
 	// readAlso: ObjectId[]
 }
