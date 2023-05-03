@@ -11,7 +11,7 @@ export class Post {
 	@Prop()
 	titleUrl: string;
 
-	@Prop()
+	@Prop({ ref: 'Image' })
 	mainImg: string;
 
 	@Prop({ ref: 'BlogCategory' })

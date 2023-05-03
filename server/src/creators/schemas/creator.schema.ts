@@ -12,7 +12,7 @@ export class Creator {
 	@Prop({ unique: true })
 	nickName: string;
 
-	@Prop()
+	@Prop({ ref: 'Image' })
 	photo: string;
 
 	@Prop()
