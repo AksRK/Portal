@@ -1,9 +1,9 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
 import {Document} from "mongoose";
 
-export type FileDocument = File & Document;
+export type ImageDocument = Image & Document;
 @Schema({timestamps:true})
-export class File {
+export class Image {
 	@Prop()
 	folderName: string;
 	@Prop()
@@ -13,4 +13,4 @@ export class File {
 	@Prop()
 	compressedImgPath: string;
 }
-export const FileSchema = SchemaFactory.createForClass(File);
+export const ImageSchema = SchemaFactory.createForClass(Image);

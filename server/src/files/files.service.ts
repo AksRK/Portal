@@ -1,17 +1,17 @@
 import {BadRequestException, Injectable, NotFoundException, UploadedFile} from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
-import {File, FileDocument} from "./schemas/file.schema";
 import { Multer } from 'multer';
 import * as fs from "fs";
 import { v4 as uuidV4 } from 'uuid';
 import * as sharp from "sharp";
+import {Image,ImageDocument} from "./schemas/image.schema";
 @Injectable()
 export class FilesService {
 	constructor(
-		@InjectModel(File.name) private FileModel: Model<FileDocument>,
+		@InjectModel(Image.name) private FileModel: Model<ImageDocument>,
 	) {}
-	async uploadImage(imageFile: Multer.File): Promise<FileDocument> {
+	async uploadImage(imageFile: Multer.File): Promise<ImageDocument> {
 		try {
 			const newFileName = uuidV4()
 			const imageDirPath = `static/images/${newFileName}`;
@@ -41,11 +41,11 @@ export class FilesService {
 		}
 	}
 
-	async getAllImages(): Promise<FileDocument[]> {
+	async getAllImages(): Promise<ImageDocument[]> {
 		return this.FileModel.find().exec()
 	}
 
-	async removeImage(id: string, folderPath?: string) : Promise<FileDocument> {
+	async removeImage(id: string, folderPath?: string) : Promise<ImageDocument> {
 		let params = {}
 		if (id) {
 			params['_id'] = id;
