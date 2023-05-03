@@ -83,6 +83,9 @@ export class PostsService {
     if (!post) {
       throw new NotFoundException(`Post ${titleUrl} not found`)
     }
+    post.viewsCount += 1
+    await post.save()
+
     return post
   }
 
