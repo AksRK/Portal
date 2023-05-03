@@ -4,6 +4,7 @@ import {FC} from "react";
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {ICategoryPageProps} from "@/core/types";
+import {API_URL} from "@/core/constants";
 
 
 const CategoryPage:FC<ICategoryPageProps> = ({ categories, posts, creators, currentCategory}) => {
@@ -30,8 +31,8 @@ export default CategoryPage;
 
 export async function getServerSideProps(context:GetServerSidePropsContext ) {
 	const [categories, currentCategory] = await Promise.all([
-		await fetch(`http://localhost:3000/api/blog/category/`).then(r => r.json()),
-		await fetch(`http://localhost:3000/api/blog/category/url/${context.params?.category}`).then(r => r.json())
+		await fetch(`${API_URL}/blog/category/`).then(r => r.json()),
+		await fetch(`${API_URL}/blog/category/url/${context.params?.category}`).then(r => r.json())
 
 	])
 
@@ -46,13 +47,13 @@ export async function getServerSideProps(context:GetServerSidePropsContext ) {
 	let creators
 
 	if (!currentCategory.editable) {
-		creators = await fetch(`http://localhost:3000/api/creators/`).then(r => r.json())
+		creators = await fetch(`${API_URL}/creators/`).then(r => r.json())
 
 		return {
 			props: {categories: categories, creators: creators, currentCategory: currentCategory}
 		}
 	}else {
-		posts = await fetch(`http://localhost:3000/api/posts/category/${currentCategory._id}`).then(r => r.json())
+		posts = await fetch(`${API_URL}/posts/category/${currentCategory._id}`).then(r => r.json())
 
 		return {
 			props: {categories: categories, posts : posts, currentCategory: currentCategory}

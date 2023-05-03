@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useRef } from "react";
 import CategoryNav from "@/components/CategoryNav";
 import ShrinkText from "@/components/UI/ShrinkText";
+import {API_URL} from "@/core/constants";
 
 export default function Home({categories}:any) {
 
@@ -39,7 +40,8 @@ export default function Home({categories}:any) {
 }
 
 export async function getServerSideProps() {
-    const categories = await fetch(`http://localhost:3000/api/blog/category/`).then(r => r.json())
+    const categories = await fetch(`${API_URL}/blog/category/`).then(r => r.json())
+
     return {
         props: {categories: categories}
     }
