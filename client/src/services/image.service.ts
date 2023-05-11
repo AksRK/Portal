@@ -1,11 +1,13 @@
 import {AxiosResponse} from "axios";
 import $api from "@/core/api";
-import {DeleteImageParams} from "@/core/types";
+import {DeleteImageParams, IImageData} from "@/core/types";
 
 
 
 export default class ImageService {
-	static async upload(formData: FormData): Promise<AxiosResponse<any>> {
+	static async upload(image: File): Promise<AxiosResponse<IImageData>> {
+		const formData = new FormData();
+		formData.append('image', image);
 		return $api.post<any>(
 			'/files/image',
 			formData,
