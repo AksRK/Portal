@@ -1,4 +1,5 @@
 import {ICategoryBlogData, ICreatorData, IPostData} from "@/core/types";
+export * from './admin'
 
 export interface ICategoryPageProps {
 	categories: [ICategoryBlogData],
@@ -15,3 +16,9 @@ export interface ICreatorPageProps {
 export interface IPostPageProps {
 	post: IPostData
 }
+
+export interface IHomePageProps {
+	categories: [ICategoryBlogData],
+	posts: [IPostData]
+}
+

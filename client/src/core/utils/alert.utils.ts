@@ -1,44 +1,36 @@
-import {toast} from "react-toastify";
-
-
-interface AlertProps {
-	msg: string
-	type: 'error' | 'success' | 'info'
-}
+import {toast, ToastOptions} from "react-toastify";
+import {AlertProps} from "@/core/types";
 
 export const Alert = ({msg, type}:AlertProps) => {
-	if (type === 'error') {
-		return toast.error(msg, {
-			position: "bottom-center",
-			autoClose: 4000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "colored",
+	const toastSettings: ToastOptions = {
+		position: "bottom-center",
+		autoClose: 1500,
+		hideProgressBar: false,
+		closeOnClick: true,
+		pauseOnHover: true,
+		draggable: true,
+		progress: undefined,
+		theme: "colored",
+	}
+	const returnAlert = (text:string) => {
+
+		switch (type) {
+			case 'error':
+				return toast.error(text, toastSettings);
+			case 'success':
+				return toast.success(text, toastSettings);
+			case 'info':
+				return toast.info(text, toastSettings);
+			default:
+				return;
+		}
+	}
+
+	if (Array.isArray(msg)) {
+		msg.forEach((text) => {
+			returnAlert(text);
 		});
-	}else if (type === 'success') {
-		toast.success(msg, {
-			position: "bottom-center",
-			autoClose: 3000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "colored",
-		});
-	}else  if (type === 'info') {
-		toast.info(msg, {
-			position: "bottom-center",
-			autoClose: 1000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "colored",
-		});
+	} else {
+		returnAlert(msg);
 	}
 }

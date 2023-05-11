@@ -1,10 +1,10 @@
-import React, {ReactNode} from "react";
+import React, {Dispatch, ReactNode, SetStateAction} from "react";
 
 export * from './Admin'
 export * from './Layout'
 export * from './UI'
 
-import {ICategoryBlogData} from "@/core/types";
+import {ICategoryBlogData, IImageData} from "@/core/types";
 
 export interface CategoryNavProps {
 	categories: [ICategoryBlogData]
@@ -31,3 +31,16 @@ export interface EditorProps {
 	onChange?: (content: string) => void;
 	props?: any;
 }
+
+export type FullSizeImageModalProps = {
+	state: boolean;
+	setState: Dispatch<SetStateAction<boolean>>;
+	imgUrl?: string;
+	imageId?: string
+	// callback?: () => void;
+};
+
+export type InputImageProps = {
+	imageData: IImageData | null;
+	setImageData: (data: IImageData | null) => void;
+};
