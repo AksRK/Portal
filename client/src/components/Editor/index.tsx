@@ -64,13 +64,12 @@ export default function Editor({ initialContent = "", name, onChange, props }: E
 	}
 
 	const handleImageUploadBefore = (files: any, info: any, uploadHandler: Function) => {
-		const formData = new FormData();
-		formData.append("image", files[0]);
+		const image = files[0]
 		const domainString = document.domain
-		ImageService.upload(formData)
+		ImageService.upload(image)
 			.then((response) => {
 			const res = {
-				errorMessage: response?.data?.message,
+				// errorMessage: response?.data?.message,
 				result: [
 					{
 						url: 'http://'+domainString+':3000/api/'+response.data.compressedImgPath,
