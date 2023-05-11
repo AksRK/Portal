@@ -1,10 +1,8 @@
-import {BlogCategory} from "../../blog-category/schemas/blog-category.schema";
-import {ObjectId} from "mongoose";
-
 export class CreatePostDto {
 	title: string;
 
 	mainImg: string
+	description: string;
 
 	content: string
 
@@ -12,7 +10,8 @@ export class CreatePostDto {
 
 	creator?: string
 
+	readAlso?: [string]
+
 	viewsCount?: number
 
-	// readAlso: ObjectId[]
 }
