@@ -15,7 +15,9 @@ const CategoryPage:FC<ICategoryPageProps> = ({ categories, posts, creators, curr
 			<CategoryNav categories={categories}/>
 			{
 				posts?.map((post)=> {
-					return <Link href={`/${router?.query?.category}/posts/${post.titleUrl}`}>{post.title}</Link>
+					return <div style={{background: "salmon", height:'100px'}}>
+						<Link href={`/${router?.query?.category}/posts/${post.titleUrl}`}>{post.title}</Link>
+					</div>
 				})
 			}
 			{
@@ -53,10 +55,9 @@ export async function getServerSideProps(context:GetServerSidePropsContext ) {
 			props: {categories: categories, creators: creators, currentCategory: currentCategory}
 		}
 	}else {
-		posts = await fetch(`${API_URL}/posts/category/${currentCategory._id}`).then(r => r.json())
-
+		posts = await fetch(`${API_URL}/posts/query/all/?categoryId=${currentCategory._id}`).then(r => r.json())
 		return {
-			props: {categories: categories, posts : posts, currentCategory: currentCategory}
+			props: {categories: categories, posts : posts.docs, currentCategory: currentCategory}
 		}
 	}
 
