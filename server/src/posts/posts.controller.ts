@@ -2,6 +2,7 @@ import {Controller, Get, Post, Body, Patch, Param, Delete, Query} from '@nestjs/
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import {PostsService} from "./posts.service";
+import {DEFAULT_DOCS_LIMIT, DEFAULT_PAGE_PAGINATION} from "../common/constants";
 
 @Controller('posts')
 export class PostsController {
@@ -17,26 +18,30 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
+  @Get('/admin/')
+  findAllForAdmin() {
+    return this.postsService.findAllForAdmin();
+  }
+
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.postsService.findById(id);
   }
 
-  @Get('/title/:title')
-  findByTitle(@Param('title') title: string) {
-    return this.postsService.findByTitle(title);
+  @Get('/title/all/:title')
+  findAllByTitle(@Param('title') title: string) {
+    return this.postsService.findAllByTitle(title);
   }
 
-  @Get('/title-url/:titleUrl')
-  findByTitleUrl(@Param('titleUrl') titleUrl: string) {
-    return this.postsService.findByTitleUrl(titleUrl);
-  }
   @Get('/query/all/')
   findAllByQuery(
       @Query('categoryId') categoryId: string,
       @Query('creatorId') creatorId?: string,
+      @Query('page') page: string = DEFAULT_PAGE_PAGINATION,
+      @Query('limit') limit: string = DEFAULT_DOCS_LIMIT,
+      @Query('title') title?: string,
   ){
-    return this.postsService.findAllByQuery(categoryId, creatorId)
+    return this.postsService.findAllByQuery(categoryId, creatorId, page, limit, title)
   }
   @Get('/query/one/')
   findOneByQuery(
@@ -47,11 +52,6 @@ export class PostsController {
     return this.postsService.findOneByQuery(categoryId, titleUrl, creatorId)
   }
 
-
-  @Get('category/:categoryId')
-  findByCategoryId(@Param('categoryId') categoryId: string) {
-    return this.postsService.findByCategoryId(categoryId);
-  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
