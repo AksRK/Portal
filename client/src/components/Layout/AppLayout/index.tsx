@@ -22,7 +22,7 @@ export const AppLayout:FC<AppLayoutProps> = ({children, contentAnimate= true}) =
 			setBannerBoxHeight(headerWithBannerRef.current.clientHeight)
 			setFooterBoxHeight(footerRef.current.clientHeight)
 		}
-	},[headerWithBannerRef, footerRef])
+	},[router.asPath])
 
 	if (router.asPath.includes('admin')) {
 		return (
