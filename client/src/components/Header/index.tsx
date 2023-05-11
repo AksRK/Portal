@@ -60,6 +60,7 @@ const Header:FC = () => {
 							{/*	<MenuItem onClick={handleClose}>Logout</MenuItem>*/}
 							{/*</Menu>*/}
 							<button onClick={logout}>Выйти</button>
+							<Link href={'/admin/panel/creators'}>Креаторы</Link>
 							<Link href={'/admin/panel/posts'}>Посты</Link>
 							<Link href={'/admin/panel/category'}>Категории </Link>
 						</div>
