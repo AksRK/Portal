@@ -22,8 +22,12 @@ export class CreatorsService {
     return this.creatorModel.find().exec()
   }
 
+  async findAllForAdmin() {
+    return this.creatorModel.find().select('_id fullName nickName').exec()
+  }
+
   async findOneById(id: string) :Promise<CreatorDocument> {
-    return this.creatorModel.findById(id).exec();
+    return this.creatorModel.findById(id).populate({path: 'photo', select: '_id folderName folderPath originalImgPath compressedImgPath'}).exec();
   }
 
   async findOneByNickName(nickName: string) :Promise<CreatorDocument> {

@@ -17,6 +17,11 @@ export class CreatorsController {
     return this.creatorsService.findAll();
   }
 
+  @Get('/admin/')
+  findAllForAdmin() {
+    return this.creatorsService.findAllForAdmin();
+  }
+
   @Get(':id')
   findOneById(@Param('id') id: string) {
     return this.creatorsService.findOneById(id);
