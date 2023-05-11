@@ -40,6 +40,10 @@ export class BlogCategoryService {
 		return this.blogCategoryModel.find().sort({createdAt: 1, editable: -1}).exec();
 	}
 
+	async findAllForAdmin(): Promise<BlogCategoryDocument[]> {
+		return this.blogCategoryModel.find().select('_id title titleUrl editable');
+	}
+
 	async findById(id: string): Promise<BlogCategoryDocument> {
 		return this.blogCategoryModel.findById(id).exec();
 	}

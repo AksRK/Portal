@@ -30,6 +30,10 @@ export class BlogCategoryController {
     return this.blogCategoryService.findAll();
   }
 
+  @Get('admin')
+  async findAllForAdmin(): Promise<BlogCategoryDocument[]> {
+    return this.blogCategoryService.findAllForAdmin();
+  }
 
   @Get(':id')
   async findById(
