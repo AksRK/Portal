@@ -17,7 +17,7 @@ const CreatorPage:FC<ICreatorPageProps> = ({categories,creator, posts}) => {
 			<h1>{creator?.fullName}</h1>
 			{
 				posts?.map((post:any)=> {
-					return <Link href={`/${router?.query?.category}/${router?.query?.creator}/${post.titleUrl}`}>{post.title}</Link>
+					return <Link href={`/${router?.query?.category}/${router?.query?.creator}/posts/${post.titleUrl}`}>{post.title}</Link>
 				})
 			}
 		</div>
@@ -27,30 +27,22 @@ const CreatorPage:FC<ICreatorPageProps> = ({categories,creator, posts}) => {
 export default CreatorPage;
 
 export async function getServerSideProps(context:GetServerSidePropsContext ) {
-	const [categories, currentCategory] = await Promise.all([
+	const [categories, currentCategory, creator] = await Promise.all([
 		fetch(`${API_URL}/blog/category/`).then(r => r.json()),
-		fetch(`${API_URL}/blog/category/url/${context.params?.category}`).then(r => r.json())
-
+		fetch(`${API_URL}/blog/category/url/${context.params?.category}`).then(r => r.json()),
+		fetch(`${API_URL}/creators/nick-name/${context.params?.creator}`).then((res) => res.json()),
 	])
 
-	if (currentCategory?.statusCode == 404) {
+	if (currentCategory?.statusCode == 404 || creator?.statusCode == 404) {
 		context.res.setHeader("Location", "/");
 		context.res.statusCode = 302;
 		context.res.end();
 		return { props: {} };
 	}
 
-	const [creator, creatorPosts] = await Promise.all([
-		fetch(`${API_URL}/creators/nick-name/${context.params?.creator}`).then((res) => res.json()),
-		fetch(`${API_URL}/posts/query/all/?categoryId=${currentCategory._id}&creator=${context.params?.creator}`).then((res) => res.json()),
+	const [creatorPosts] = await Promise.all([
+		fetch(`${API_URL}/posts/query/all/?categoryId=${currentCategory._id}&creatorId=${creator._id}`).then((res) => res.json()),
 	])
 
-	if (creator?.statusCode == 404) {
-		context.res.setHeader("Location", "/"+context.params?.category);
-		context.res.statusCode = 302;
-		context.res.end();
-		return { props: {} };
-	}
-
-	return {props: {categories: categories,creator: creator, posts: creatorPosts}}
+	return {props: {categories: categories,creator: creator, posts: creatorPosts.docs}}
 }
