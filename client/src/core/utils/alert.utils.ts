@@ -1,7 +1,7 @@
 import {toast, ToastOptions} from "react-toastify";
-import {AlertProps} from "@/core/types";
+import {IAlertProps} from "@/core/types";
 
-export const Alert = ({msg, type}:AlertProps) => {
+export const Alert = ({msg, type}:IAlertProps) => {
 	const toastSettings: ToastOptions = {
 		position: "bottom-center",
 		autoClose: 1500,
