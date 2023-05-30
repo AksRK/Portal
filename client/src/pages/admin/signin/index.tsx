@@ -1,9 +1,9 @@
-import React, {FC, useContext, useEffect} from 'react';
+import {FC, useContext, useEffect} from 'react';
 import {useRouter} from "next/router";
 import {observer} from "mobx-react-lite";
 import {Context} from "@/components/StoreProvider";
 import {useForm} from "react-hook-form";
-import {SignInFormDataProps} from "@/core/types/shared";
+import {ISignInFormDataProps} from "@/core/types/shared";
 
 const SignIn: FC = () => {
 	const router = useRouter()
@@ -18,7 +18,7 @@ const SignIn: FC = () => {
 			'password': '123456'
 		}});
 
-	const signin = (data: SignInFormDataProps) => {
+	const signin = (data: ISignInFormDataProps) => {
 		return store.authStore.signin(data)
 	}
 
