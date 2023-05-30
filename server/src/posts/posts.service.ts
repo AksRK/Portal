@@ -7,6 +7,7 @@ import {UpdatePostDto} from "./dto/update-post.dto";
 import {Utils} from "../common/utils/utils";
 import {BlogCategoryService} from "../blog-category/blog-category.service";
 import {CreatorsService} from "../creators/creators.service";
+import {FilesService} from "../files/files.service";
 
 @Injectable()
 export class PostsService {
@@ -14,9 +15,13 @@ export class PostsService {
       @InjectModel(Post.name) private PostModel: Model<PostDocument>,
       @InjectModel(Post.name) private PostModelPaginate: PaginateModel<PostDocument>,
       private blogCategoryService: BlogCategoryService,
-      private creatorsService: CreatorsService
+      private creatorsService: CreatorsService,
+      private  filesService: FilesService,
   ) {}
 
+  async removeAllFromCategory(posts: [string]) {
+    posts.map(async (postId) => await this.PostModel.findByIdAndDelete(postId))
+  }
   async removePostFromCategory(categoryId: string, postId :string) {
     const category =  await this.blogCategoryService.findById(categoryId)
     const categoryPostIndex = category.posts.indexOf(postId)
@@ -59,6 +64,12 @@ export class PostsService {
       ...createPostDto,
       titleUrl: titleUrlTransliterate,
     });
+    const category = await this.blogCategoryService.findById(createPostDto.category)
+
+    if (!category.editable && !createPostDto.creator) {
+      throw new BadRequestException(`Невозможно создать пост, не указан креатор`);
+    }
+
     await createdPost.save()
 
     await this.addPostToCategory(createPostDto.category, createdPost._id)
@@ -83,18 +94,13 @@ export class PostsService {
         .findById(id)
         .populate({path:'mainImg', select: '_id folderName folderPath originalImgPath compressedImgPath'})
         .populate({path:'category', select: '_id title titleUrl editable'})
-        .populate({path:'readAlso',select:'_id title'})
         .populate({path:'creator', select: '_id nickName fullName'});
   }
   async findByTitle(title: string): Promise<PostDocument> {
     return await this.PostModel.findOne({ title }).exec()
   }
 
-  async findAllByTitle(title: string): Promise<PostDocument[]> {
-    return this.PostModel.find({title: {'$regex': title, '$options': 'i'}})
-  }
-
-  async findAllForAdmin():  Promise<PostDocument[]> {
+  async findAllReadAlso():  Promise<PostDocument[]> {
     return await this.PostModel.find().select('_id title').exec()
   }
 
@@ -109,31 +115,23 @@ export class PostsService {
       limit: parseInt(limit),
       populate: [
         {path:'category', select: '_id title titleUrl editable'},
-        {path:'creator', select: '_id nickName'}
+        {path:'creator', select: '_id nickName'},
+        {path:'mainImg'}
       ]
     }
     const query = {};
 
-    if (categoryId) {
-      query['category'] = categoryId;
-    }
-    if (creatorId) {
-      query['creator'] = creatorId;
-    }
+    if (categoryId) query['category'] = categoryId;
+    if (creatorId) query['creator'] = creatorId;
 
     return this.PostModelPaginate.paginate(query, options)
   }
   async findOneByQuery(categoryId?: string, titleUrl?: string, creatorId?: string): Promise<PostDocument> {
     const query = {}
-    if (categoryId) {
-      query['category'] = categoryId
-    }
-    if (titleUrl) {
-      query['titleUrl'] = titleUrl
-    }
-    if (creatorId) {
-      query['creator'] = creatorId;
-    }
+
+    if (categoryId) query['category'] = categoryId
+    if (titleUrl) query['titleUrl'] = titleUrl
+    if (creatorId) query['creator'] = creatorId;
 
     if ((Object.keys(query).length == 0)) {
       throw new BadRequestException('Cannot find post')
@@ -141,9 +139,8 @@ export class PostsService {
 
     const post = await this.PostModel.findOne(query).exec();
 
-    if (!post) {
-      throw new NotFoundException(`Post ${titleUrl} not found`)
-    }
+    if (!post) throw new NotFoundException(`Post ${titleUrl} not found`)
+
     post.viewsCount += 1
     await post.save()
 
@@ -168,7 +165,6 @@ export class PostsService {
     if (post.category !== category._id) {
       await this.removePostFromCategory(post.category, post._id)
       await this.addPostToCategory(category._id, post._id)
-
     }
 
     if (post.creator && !updatePostDto.creator || post.creator !== updatePostDto.creator) {
@@ -188,19 +184,19 @@ export class PostsService {
   }
 
   async remove(id: string): Promise<PostDocument> {
-    const post = await this.findById(id);
-    if (!post) {
-      throw new BadRequestException('Post not found');
-    }
+    const post = await this.PostModel.findById(id).exec();
+    const regex = /<img.*?src="[^"]*\/api\/static\/images\/([^\\/]+)\//g;
+
+    if (!post) throw new BadRequestException('Post not found')
     await this.removePostFromCategory(post.category, post._id)
+    if (post.creator) await this.removePostFromCreator(post.creator, post._id)
 
-    if (post.creator) {
-      await this.removePostFromCreator(post.creator, post._id)
+    await this.filesService.removeImage({id: post.mainImg})
+    let match;
+    while ((match = regex.exec(post.content))) {
+      await this.filesService.removeImage({folderPath: 'static/images/'+match[1]})
     }
-    return this.PostModel.findByIdAndDelete(id).exec();
-  }
 
-  async removeAllFromCategory(posts: [string]) {
-    posts.map(async (postId) => await this.PostModel.findByIdAndDelete(postId))
+    return post.deleteOne()
   }
 }
