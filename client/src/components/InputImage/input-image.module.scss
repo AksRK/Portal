@@ -1,7 +1,6 @@
 .inputImage {
   position: relative;
-  margin: 50px;
-  width: 100%;
+  width: 100vw;
   max-width: 400px;
   height: 500px;
   border-radius: 20px;
@@ -13,6 +12,13 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  &__loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   &__add {
