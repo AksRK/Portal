@@ -1,8 +1,8 @@
 import {FC} from 'react';
 import styles from './modal-content.module.scss'
-import {ModalContentProps} from "@/core/types";
+import {IModalContentProps} from "@/core/types";
 
-const ModalContent:FC<ModalContentProps> = ({children}) => {
+const ModalContent:FC<IModalContentProps> = ({children}) => {
 	return (
 		<div className={styles.modalContent}>
 			{children}

@@ -1,9 +1,9 @@
 import {FC} from "react";
 import Link from "next/link";
 import {useRouter} from "next/router";
-import {ActiveLinkStyleProps} from "@/core/types";
+import {IActiveLinkStyleProps} from "@/core/types";
 
-const NavLink:FC<ActiveLinkStyleProps> = (
+const NavLink:FC<IActiveLinkStyleProps> = (
 	{
 		children,
 		url,
