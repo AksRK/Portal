@@ -1,6 +1,6 @@
 import {
     BadRequestException,
-    Controller, Delete, Get, Param,
+    Controller, Delete, Get,
     Post, Query,
     UploadedFile,
     UseInterceptors
@@ -45,7 +45,7 @@ export class FilesController {
       @Query('id') id: string,
       @Query('folderPath') folderPath: string,
   ) {
-      return this.filesService.removeImage(id, folderPath)
+      return this.filesService.removeImage({id, folderPath})
   }
 
   @Delete('/image/all')

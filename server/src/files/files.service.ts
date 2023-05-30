@@ -6,6 +6,7 @@ import * as fs from "fs";
 import { v4 as uuidV4 } from 'uuid';
 import * as sharp from "sharp";
 import {Image,ImageDocument} from "./schemas/image.schema";
+import {IRemoveImageProps} from "./types/files.interface";
 @Injectable()
 export class FilesService {
 	constructor(
@@ -45,26 +46,22 @@ export class FilesService {
 		return this.FileModel.find().exec()
 	}
 
-	async removeImage(id: string, folderPath?: string) : Promise<ImageDocument> {
+	async removeImage({id, folderPath}:IRemoveImageProps) : Promise<ImageDocument> {
 		let params = {}
-		if (id) {
-			params['_id'] = id;
-		}
-		if (folderPath) {
-			params['folderPath'] = folderPath;
-		}
-		if (!id && !folderPath) {
-			throw new BadRequestException(`Can't find image, please specify options`)
-		}
+
+		if (id) params['_id'] = id;
+		if (folderPath) params['folderPath'] = folderPath;
+
+		if (!id && !folderPath) throw new BadRequestException(`Can't find image, please specify options`)
 
 		const image = await this.FileModel.findOne({...params})
-		if (!image) {
-			throw new NotFoundException('Image not found')
-		}
+
+		if (!image) throw new NotFoundException('Image not found')
+
 		const folderExist = fs.existsSync(image.folderPath)
-		if (folderExist) {
-			await fs.promises.rm(image.folderPath, { recursive: true });
-		}
+
+		if (folderExist) await fs.promises.rm(image.folderPath, { recursive: true });
+
 		await image.deleteOne()
 
 		return image
@@ -78,7 +75,6 @@ export class FilesService {
 				await this.removeImage(image._id)
 			}
 		}
-
 
 		return {success:true}
 	}
