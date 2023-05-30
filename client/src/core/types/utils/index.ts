@@ -1,4 +1,4 @@
-export interface AlertProps {
-	msg: string | [string]
-	type: 'error' | 'success' | 'info'
+export interface IAlertProps {
+	msg: string | [string];
+	type: 'error' | 'success' | 'info';
 }

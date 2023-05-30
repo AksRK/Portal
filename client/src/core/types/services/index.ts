@@ -1,10 +1,10 @@
-export interface DeleteImageParams {
+export interface IDeleteImageParams {
 	id?: string;
 	folderPath?: string;
 }
 
-export interface PaginationParams<T> {
-	docs: T[];
+export interface IPaginationParams<T> {
+	docs: T;
 	totalDocs: number;
 	limit: number;
 	totalPages: number;

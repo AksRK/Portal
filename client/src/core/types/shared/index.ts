@@ -1,3 +1,8 @@
+import {SubmitHandler} from "react-hook-form";
+
+export interface IFromServer {
+	fromServer?: boolean;
+}
 export interface ICategoryBlogData {
 	_id: string;
 	title: string;
@@ -25,7 +30,7 @@ export interface IPostData {
 		fullName: string
 	};
 	content: string;
-	readAlso : [IPostData]
+	readAlso : string[];
 	viewsCount: number;
 	createdAt: string;
 	updatedAt: string
@@ -42,7 +47,7 @@ export interface ICreatorData {
 	posts: [string]
 }
 
-export interface CreatorFormData {
+export interface ICreatorFormData {
 	fullName: string;
 	nickName: string;
 	photo: string;
@@ -51,10 +56,10 @@ export interface CreatorFormData {
 	about: string
 }
 
-export interface PostFormData {
+export interface IPostFormData {
 	title: string;
 	description: string;
-	mainImg: string
+	mainImg: string;
 	category: string;
 	creator?: string | null;
 	content: string;
@@ -72,11 +77,45 @@ export interface IImageData {
 
 }
 
-export interface SignInFormDataProps {
+export interface ISignInFormDataProps {
 	email: string;
 	password: string
 }
 
-export interface CategoryFormData {
+export interface ICategoryFormData {
 	title: string;
+}
+export interface ILoadMoreParams {
+	page?: number;
+	limit?: number;
+}
+export interface IPostsLoadParams extends ILoadMoreParams, IFromServer{
+	categoryId?: string;
+	creatorId?: string;
+
+}
+
+export interface IPostLoadParam extends IFromServer {
+	categoryId?: string;
+	creatorId?: string;
+	titleUrl?: string;
+}
+
+export interface ICreatorsLoadParams extends ILoadMoreParams, IFromServer {}
+
+export interface ICreatorsFindOneParams extends IFromServer {
+	id?: string;
+	fullName?: string;
+	nickName?: string;
+}
+
+export interface ICategoryFindParams extends IFromServer {
+	id?: string
+	title?:string
+	titleUrl?: string
+}
+
+export interface ICreatorForm {
+	defaultCreatorValues?: ICreatorData;
+	onSubmit: SubmitHandler<ICreatorFormData>;
 }

@@ -17,7 +17,7 @@ export interface IPostsTableProps {
 	onDelete: (id: string) => Promise<void>;
 }
 
-export interface BasicMenuProps {
+export interface IBasicMenuProps {
 	onEdit: () => void;
 	onDelete: () => void;
 }

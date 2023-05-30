@@ -1,10 +1,10 @@
 import {ReactNode} from "react";
 
-export interface AppLayoutProps {
+export interface IAppLayoutProps {
 	children?: ReactNode;
 	contentAnimate?: boolean;
 }
 
-export interface AdminLayoutProps {
+export interface IAdminLayoutProps {
 	children: ReactNode;
 }

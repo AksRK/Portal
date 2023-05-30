@@ -1,24 +1,24 @@
-import {ICategoryBlogData, ICreatorData, IPostData} from "@/core/types";
+import {ICategoryBlogData, ICreatorData, IPaginationParams, IPostData } from "@/core/types";
 export * from './admin'
 
 export interface ICategoryPageProps {
-	categories: [ICategoryBlogData],
-	currentCategory?: ICategoryBlogData,
-	posts?: [IPostData]
-	creators?: [ICreatorData]
+	postsWithPagination?: IPostsResWithPagination;
+	creatorsWithPagination?: ICreatorsResWithPagination;
+	categories: ICategoryBlogData[];
 }
 
 export interface ICreatorPageProps {
-	categories: [ICategoryBlogData];
-	creator: ICreatorData,
-	posts: [IPostData]
+	creator: ICreatorData;
+	postsWithPagination: IPostsResWithPagination;
+	categories: ICategoryBlogData[];
 }
 export interface IPostPageProps {
-	post: IPostData
+	post: IPostData;
 }
 
+export interface IPostsResWithPagination extends IPaginationParams<IPostData[]> {}
+export interface ICreatorsResWithPagination extends IPaginationParams<ICreatorData[]> {}
 export interface IHomePageProps {
-	categories: [ICategoryBlogData],
-	posts: [IPostData]
+	postsWithPagination: IPostsResWithPagination;
+	categories: ICategoryBlogData[];
 }
-
