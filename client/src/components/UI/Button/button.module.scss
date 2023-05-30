@@ -1,0 +1,60 @@
+.button {
+  position: relative;
+  display: inline-block;
+  z-index: 0;
+  border-radius: 37px;
+  padding: 12px 21px;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 18px;
+
+  transition: background-color 0.2s, color 0.4s , border-color 0.2s;
+
+  &_circle {
+    width: 44px;
+    height: 44px;
+    padding: 4px;
+    border-radius: 50%;
+  }
+
+  &_black {
+    background: #000000;
+    border: 1px solid #000000;
+    color: #FFFFFF;
+
+    &:hover {
+      background: #333333;
+      border-color: #F1F1F1;
+    }
+  }
+
+  &_white {
+    background: #FFFFFF;
+    border: 1px solid #F1F1F1;
+    color: #000000;
+
+    &:hover {
+      background: #D9D9D9;
+      border-color: #F1F1F1;
+    }
+  }
+
+  &_disabled {
+    background: #717171;
+    border-color: #717171;
+    color: #FFFFFF;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #717171;
+      border-color: #717171;
+    }
+  }
+}

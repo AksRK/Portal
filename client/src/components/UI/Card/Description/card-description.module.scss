@@ -1,0 +1,22 @@
+.cardDescription {
+  width: 100%;
+  font-family: 'Source Serif Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+  color: #000000;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  &_lineClamp_2 {
+    height: 60px;
+    -webkit-line-clamp: 2;
+  }
+
+  &_lineClamp_4 {
+    height: 110px;
+    -webkit-line-clamp: 4;
+  }
+}

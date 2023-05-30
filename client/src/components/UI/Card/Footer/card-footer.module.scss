@@ -1,0 +1,14 @@
+.cardFooter {
+  width: 100%;
+  position: relative;
+  bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+
+  &_visible {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,16 @@
+.cardBody {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border: 1px solid rgba(236, 236, 236, 0);
+  border-radius: 23px;
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+  user-select: none;
+
+  &_hover {
+    background: #FFFFFF;
+    border-color: #ECECEC;
+  }
+}
