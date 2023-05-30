@@ -13,24 +13,14 @@ export class PostsController {
     return this.postsService.create(createPostDto);
   }
 
-  @Get()
-  findAll() {
-    return this.postsService.findAll();
-  }
-
-  @Get('/admin/')
-  findAllForAdmin() {
-    return this.postsService.findAllForAdmin();
+  @Get('/read-also/')
+  findAllReadAlso() {
+    return this.postsService.findAllReadAlso();
   }
 
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.postsService.findById(id);
-  }
-
-  @Get('/title/all/:title')
-  findAllByTitle(@Param('title') title: string) {
-    return this.postsService.findAllByTitle(title);
   }
 
   @Get('/query/all/')
