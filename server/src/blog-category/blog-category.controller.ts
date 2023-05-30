@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Patch,
-  Post, UseFilters,
+  Post, Query,
 } from '@nestjs/common';
 import { BlogCategoryService } from './blog-category.service';
 import { BlogCategoryDocument } from "./schemas/blog-category.schema";
@@ -35,25 +35,13 @@ export class BlogCategoryController {
     return this.blogCategoryService.findAllForAdmin();
   }
 
-  @Get(':id')
-  async findById(
-      @Param('id') id: string,
-  ): Promise<BlogCategoryDocument> {
-    return this.blogCategoryService.findById(id);
-  }
-
-  @Get('title/:title')
-  async findByTitle(
-      @Param('title') title: string,
-  ): Promise<BlogCategoryDocument> {
-    return this.blogCategoryService.findByTitle(title);
-  }
-
-  @Get('url/:url')
-  async findByUrl(
-      @Param('url') url: string,
-  ): Promise<BlogCategoryDocument> {
-    return this.blogCategoryService.findByUrl(url);
+  @Get('/query/one/')
+  async getOne(
+      @Query('id') id?: string,
+      @Query('title') title?: string,
+      @Query('titleUrl') titleUrl?: string,
+      ) {
+    return this.blogCategoryService.findOneByQuery(id, title, titleUrl)
   }
 
   @Patch(':id')

@@ -44,20 +44,28 @@ export class BlogCategoryService {
 		return this.blogCategoryModel.find().select('_id title titleUrl editable');
 	}
 
+	async findOneByQuery(id: string, title: string, titleUrl: string) {
+		const params = {}
+
+		if (!id && !title && !titleUrl) throw new NotFoundException()
+
+		if (id) params['_id'] = id
+		if (title) params['title'] = title
+		if (titleUrl) params['titleUrl'] = titleUrl
+
+		const category = await this.blogCategoryModel.findOne(params)
+
+		if (!category) throw new NotFoundException()
+
+		return category
+	}
+
 	async findById(id: string): Promise<BlogCategoryDocument> {
 		return this.blogCategoryModel.findById(id).exec();
 	}
 
 	async findByTitle(title: string): Promise<BlogCategoryDocument> {
 		return this.blogCategoryModel.findOne({title: title}).exec();
-	}
-
-	async findByUrl(url: string): Promise<BlogCategoryDocument> {
-		const category = await this.blogCategoryModel.findOne({titleUrl: url}).exec();
-		if (!category) {
-			throw new NotFoundException('Index not found')
-		}
-		return category
 	}
 
 	async update(
@@ -67,15 +75,13 @@ export class BlogCategoryService {
 		const blogCategoryExists = await this.findById(
 			id,
 		);
-		if (!blogCategoryExists) {
-			throw new NotFoundException('Blog Index Not Found');
-		}
+		if (!blogCategoryExists) throw new NotFoundException('Blog Index Not Found');
+
 		const titleUrlTransliterate = Utils.transliterateText(updateBlogCategoryDto.title)
 
 		const blogCategoryUniqueUrl = await this.blogCategoryModel.findOne({titleUrl: titleUrlTransliterate})
-		if (blogCategoryUniqueUrl) {
-			throw new BadRequestException('Category must have unique Title & Url')
-		}
+
+		if (blogCategoryUniqueUrl) throw new BadRequestException('Category must have unique Title & Url')
 
 		return this.blogCategoryModel
 			.findByIdAndUpdate(id, {...updateBlogCategoryDto, titleUrl: titleUrlTransliterate}, { new: true })
@@ -88,14 +94,12 @@ export class BlogCategoryService {
 		if (!blogCategory) {
 			throw new NotFoundException('Blog Index Not Found');
 		}
-		if (blogCategory.posts.length > 0) {
-			await this.postsService.removeAllFromCategory(blogCategory.posts)
-		}
 		if (!blogCategory.editable) {
 			throw new BadRequestException('This category cannot be deleted')
 		}
+		if (blogCategory.posts.length > 0) {
+			await this.postsService.removeAllFromCategory(blogCategory.posts)
+		}
 		return this.blogCategoryModel.findByIdAndDelete(id).exec();
 	}
-
-
 }
