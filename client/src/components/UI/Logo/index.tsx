@@ -1,9 +1,9 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import styles from './logo.module.scss'
 import Link from "next/link";
-import {LogoProps} from "@/core/types";
+import {ILogoProps} from "@/core/types";
 
-const Logo:FC<LogoProps> = ({variant}) => {
+const Logo:FC<ILogoProps> = ({variant}) => {
 	return (
 		<Link href={'/'} className={styles.logo}>
 			<img src="" alt="logo"/>
