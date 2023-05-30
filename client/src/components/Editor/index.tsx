@@ -1,21 +1,17 @@
 import dynamic from "next/dynamic";
-import React from "react";
 import { Core } from "suneditor/src/lib/core";
 import {Alert} from "@/core/utils/alert.utils";
 import ImageService from "@/services/image.service";
-import {EditorProps} from "@/core/types";
+import {IEditorProps} from "@/core/types";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
 	ssr: false,
 });
 
-//TODO Поправить Алерты
-
-export default function Editor({ initialContent = "", name, onChange, props }: EditorProps) {
+export default function Editor({ initialContent = "", name, onChange, props }: IEditorProps) {
 	let imagesArr: string[] = []
 
 	const options = {
-		setDefaultStyle: 'font-family: Source Serif Pro; font-size: 24px;',
 		height: 750,
 		"formats": [
 			"p",
@@ -69,7 +65,6 @@ export default function Editor({ initialContent = "", name, onChange, props }: E
 		ImageService.upload(image)
 			.then((response) => {
 			const res = {
-				// errorMessage: response?.data?.message,
 				result: [
 					{
 						url: 'http://'+domainString+':3000/api/'+response.data.compressedImgPath,
@@ -129,21 +124,17 @@ export default function Editor({ initialContent = "", name, onChange, props }: E
 	}
 
 	return (
-		<div>
-			<SunEditor
-				{...props}
-				placeholder={'Начните создавать статью)'}
-				name={name}
-				lang={'ru'}
-				setContents={initialContent}
-				setDefaultStyle={'font-family: Source Serif Pro; font-size: 22px;'}
-				setOptions={options}
-				onImageUploadBefore={handleImageUploadBefore}
-				onImageUpload={handleImageUpload}
-				// onImageUploadError={handleImageUploadError}
-				onChange={onChange}
-
-			/>
-		</div>
+		<SunEditor
+			{...props}
+			placeholder={'Начните создавать статью)'}
+			name={name}
+			lang={'ru'}
+			setContents={initialContent}
+			setDefaultStyle={'font-family: Source Serif Pro; font-size: 22px; max-width: 908px; margin: 0 auto'}
+			setOptions={options}
+			onImageUploadBefore={handleImageUploadBefore}
+			onImageUpload={handleImageUpload}
+			onChange={onChange}
+		/>
 	);
 }
