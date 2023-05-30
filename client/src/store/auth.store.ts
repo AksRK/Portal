@@ -1,6 +1,6 @@
 import {makeAutoObservable} from "mobx";
 import AuthService from "@/services/auth.service";
-import {SignInFormDataProps} from "@/core/types/shared";
+import {ISignInFormDataProps} from "@/core/types/shared";
 
 export default class AuthStore {
 	isAuth = false
@@ -18,7 +18,7 @@ export default class AuthStore {
 		this.isLoading = bool
 	}
 
-	async signin(data: SignInFormDataProps) {
+	async signin(data: ISignInFormDataProps) {
 		this.setLoading(true)
 		try {
 			const response = await AuthService.signin(data)
