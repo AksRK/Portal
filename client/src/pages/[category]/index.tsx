@@ -1,64 +1,88 @@
 import {GetServerSidePropsContext} from "next";
 import CategoryNav from "@/components/CategoryNav";
-import {FC} from "react";
-import Link from "next/link";
-import {useRouter} from "next/router";
+import {FC, useContext, useEffect} from "react";
 import {ICategoryPageProps} from "@/core/types";
-import {API_URL} from "@/core/constants";
+import PostService from "@/services/post.service";
+import BlogCategoryService from "@/services/blog-category.service";
+import CreatorsService from "@/services/creators.service";
+import {Context} from "@/components/StoreProvider";
+import PaddingWrp from "@/components/UI/PaddingWrp";
+import {observer} from "mobx-react-lite";
+import CardsList from "@/components/UI/CardsList";
 
 
-const CategoryPage:FC<ICategoryPageProps> = ({ categories, posts, creators, currentCategory}) => {
-	const router = useRouter()
+const CategoryPage:FC<ICategoryPageProps> = ({ postsWithPagination, creatorsWithPagination, categories}) => {
+	const {store} = useContext(Context)
+	useEffect(() => {
+		store.categoriesStore.saveCategories(categories)
+		if (postsWithPagination) {
+			return store.postStore.savePostsWithPagination(postsWithPagination);
+		}
+		if (creatorsWithPagination) {
+			return store.creatorStore.saveCreatorsWithPagination(creatorsWithPagination)
+		}
+	}, [postsWithPagination, creatorsWithPagination, categories]);
+
+	const loadMore = async () => {
+		if (postsWithPagination && store.postStore.postsWithPagination.nextPage) {
+			await store.postStore.loadPostsWithPagination({page:store.postStore.postsWithPagination.nextPage})
+		}
+		if (creatorsWithPagination && store.creatorStore.creatorsWithPagination.nextPage) {
+			await store.creatorStore.loadCreatorsWithPagination({page:store.creatorStore.creatorsWithPagination.nextPage})
+		}
+	}
 
 	return (
 		<>
-			<CategoryNav categories={categories}/>
+			<PaddingWrp size={'small'}>
 			{
-				posts?.map((post)=> {
-					return <div style={{background: "salmon", height:'100px'}}>
-						<Link href={`/${router?.query?.category}/posts/${post.titleUrl}`}>{post.title}</Link>
-					</div>
-				})
+				postsWithPagination
+					?
+						<CardsList
+							withTag={true}
+							data={{posts:store.postStore.postsWithPagination.docs}}
+							loadMore={store.postStore.postsWithPagination.hasNextPage}
+							isLoading={store.postStore.isLoading}
+							onLoadMore={loadMore}/>
+					:
+					''
 			}
 			{
-				creators?.map((creator) => {
-					return <Link href={`/${router?.query?.category}/${creator.nickName}`}>{creator.fullName}</Link>
-				})
+				creatorsWithPagination
+					?
+					<CardsList
+						withTag={false}
+						data={{creators:store.creatorStore.creatorsWithPagination.docs}}
+						loadMore={store.creatorStore.creatorsWithPagination.hasNextPage}
+						isLoading={store.creatorStore.isLoading}
+						onLoadMore={loadMore}/>
+					:
+					''
 			}
+			</PaddingWrp>
 		</>
 	);
 };
 
-export default CategoryPage;
+export default observer(CategoryPage);
 
-export async function getServerSideProps(context:GetServerSidePropsContext ) {
-	const [categories, currentCategory] = await Promise.all([
-		await fetch(`${API_URL}/blog/category/`).then(r => r.json()),
-		await fetch(`${API_URL}/blog/category/url/${context.params?.category}`).then(r => r.json())
+export async function getServerSideProps(context:GetServerSidePropsContext) {
+	const categoryTitleUrl = context.params?.category as string;
 
-	])
+	const categories = await BlogCategoryService.getALl({fromServer: true}).then((r) => r.data)
+	const currentCategory = categories.find((category) => category.titleUrl === categoryTitleUrl)
 
-	if (currentCategory.statusCode == 404) {
-		context.res.setHeader("Location", "/");
-		context.res.statusCode = 302;
-		context.res.end();
-		return { props: {} };
-	}
-
-	let posts
-	let creators
-
-	if (!currentCategory.editable) {
-		creators = await fetch(`${API_URL}/creators/`).then(r => r.json())
+	if (!currentCategory?.editable) {
+		const creatorsWithPagination = await CreatorsService.getALl({fromServer:true}).then((r) => r.data)
 
 		return {
-			props: {categories: categories, creators: creators, currentCategory: currentCategory}
-		}
-	}else {
-		posts = await fetch(`${API_URL}/posts/query/all/?categoryId=${currentCategory._id}`).then(r => r.json())
-		return {
-			props: {categories: categories, posts : posts.docs, currentCategory: currentCategory}
+			props: {creatorsWithPagination: creatorsWithPagination, categories: categories}
 		}
 	}
 
+	const postsResponse = await PostService.getALl({categoryId: currentCategory._id, fromServer:true}).then((r)=> r.data)
+
+	return {
+		props: {postsWithPagination: postsResponse, categories: categories}
+	}
 }

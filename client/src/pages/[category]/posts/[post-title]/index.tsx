@@ -1,7 +1,8 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {GetServerSidePropsContext} from "next";
 import {IPostPageProps} from "@/core/types";
-import {API_URL} from "@/core/constants";
+import BlogCategoryService from "@/services/blog-category.service";
+import PostService from "@/services/post.service";
 
 
 const PostPage:FC<IPostPageProps> = ({post}) => {
@@ -17,23 +18,32 @@ const PostPage:FC<IPostPageProps> = ({post}) => {
 export default PostPage;
 
 export async function getServerSideProps(context:GetServerSidePropsContext ) {
-	const currentCategory = await fetch(`${API_URL}/blog/category/url/${context.params?.category}`).then(r => r.json())
-
-	if (currentCategory?.statusCode == 404) {
+	const redirect = () => {
 		context.res.setHeader("Location", "/");
 		context.res.statusCode = 302;
 		context.res.end();
 		return { props: {} };
 	}
+	const categoryTitleUrl = context.params?.category as string;
+	const postTitleUrl = context.params?.['post-title'] as string;
 
-	const post = await fetch(`${API_URL}/posts/query/one/?categoryId=${currentCategory?._id}&titleUrl=${context.params?.['post-title']}`).then((res) => res.json())
+	const currentCategory =
+		await BlogCategoryService
+			.getOne({titleUrl:categoryTitleUrl, fromServer:true})
+			.then((r) => r.data)
+			.catch((err) => {
+				redirect()
+			})
 
-	if (post?.statusCode == 404) {
-		context.res.setHeader("Location", "/"+context.params?.category);
-		context.res.statusCode = 302;
-		context.res.end();
-		return { props: {} };
+	if (currentCategory) {
+		const post =
+			await PostService
+				.getOne({titleUrl: postTitleUrl, categoryId: currentCategory._id, fromServer: true})
+				.then((r) => r.data)
+				.catch((err) => {
+					redirect()
+				})
+
+		return {props: {post: post}}
 	}
-
-	return {props: {post: post}}
 }
