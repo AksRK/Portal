@@ -1,14 +1,12 @@
 import {AxiosResponse} from "axios";
-import $api from "@/core/api";
-import {DeleteImageParams, IImageData} from "@/core/types";
-
-
+import {IDeleteImageParams, IImageData} from "@/core/types";
+import {$private_api} from "@/core/api";
 
 export default class ImageService {
 	static async upload(image: File): Promise<AxiosResponse<IImageData>> {
 		const formData = new FormData();
 		formData.append('image', image);
-		return $api.post<any>(
+		return $private_api.post<IImageData>(
 			'/files/image',
 			formData,
 			{
@@ -17,21 +15,12 @@ export default class ImageService {
 				}
 			})
 	}
+	static async delete({id, folderPath}: IDeleteImageParams): Promise<AxiosResponse<void>> {
+		let params = ''
+		if (id) params += `id=${id}`
+		if (folderPath) params += `&folderPath=${folderPath}`
 
-	static async delete({id, folderPath}: DeleteImageParams): Promise<AxiosResponse<void>> {
-		const requestParams = () => {
-			if (id && folderPath) {
-				return `id=${id}&folderPath=${folderPath}`
-			}
-			if (id) {
-				return `id=${id}`
-			}
-			if (folderPath) {
-				return `folderPath=${folderPath}`
-			}
-		}
-
-		return $api.delete('/files/image/?'+requestParams())
+		return $private_api.delete('/files/image/?'+params)
 	}
 
 }

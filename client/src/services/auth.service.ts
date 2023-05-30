@@ -1,21 +1,21 @@
 import {AxiosResponse} from "axios";
-import $api from "@/core/api";
-import {AuthResponse, SignInFormDataProps} from "@/core/types";
+import {$private_api} from "@/core/api";
+import {IAuthResponse, ISignInFormDataProps} from "@/core/types";
 
 export default class AuthService {
-	static async signin({email, password}: SignInFormDataProps): Promise<AxiosResponse<AuthResponse>> {
-		return $api.post<AuthResponse>('auth/signin', { email, password })
+	static async signin({email, password}: ISignInFormDataProps): Promise<AxiosResponse<IAuthResponse>> {
+		return $private_api.post<IAuthResponse>('auth/signin', { email, password })
 	}
 
-	static async signup(email: string, password: string, username: string): Promise<AxiosResponse<AuthResponse>> {
-		return $api.post<AuthResponse>('auth/signup', { email, password, username })
+	static async signup(email: string, password: string, username: string): Promise<AxiosResponse<IAuthResponse>> {
+		return $private_api.post<IAuthResponse>('auth/signup', { email, password, username })
 	}
 
 	static async logout(): Promise<AxiosResponse<void>> {
-		return $api.get('auth/logout')
+		return $private_api.get('auth/logout')
 	}
 
 	static async checkAuth(): Promise<AxiosResponse<void>> {
-		return $api.get('auth/check')
+		return $private_api.get('auth/check')
 	}
 }
