@@ -6,9 +6,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {FC} from "react";
-import {BasicMenuProps} from "@/core/types";
+import {IBasicMenuProps} from "@/core/types";
 
-const BasicMenu: FC<BasicMenuProps> = ({ onEdit, onDelete }) => {
+const BasicMenu: FC<IBasicMenuProps> = ({ onEdit, onDelete }) => {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
