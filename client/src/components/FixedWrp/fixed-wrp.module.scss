@@ -1,5 +1,4 @@
 .fixedWrp {
-  position: fixed;
   width: 100%;
   height: fit-content;
   left: 0;
@@ -10,10 +9,12 @@
   z-index: 0;
 
   &_header {
+    position: sticky;
     top: 0;
   }
 
   &_footer {
+    position: fixed;
     bottom: 0;
   }
 

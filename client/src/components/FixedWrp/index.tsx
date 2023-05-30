@@ -1,15 +1,15 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import styles from './fixed-wrp.module.scss'
-import {FixedWrpProps} from "@/core/types";
+import {IFixedWrpProps} from "@/core/types";
+import {FIXED_WRP_MARGIN} from "@/core/constants";
 
-const FixedWrp = forwardRef<HTMLDivElement, FixedWrpProps>((
+const FixedWrp = forwardRef<HTMLDivElement, IFixedWrpProps>((
 	{
 		children,
 		position,
 		height,
 		isVisible}
 	,ref) => {
-	const margin = 50
 	const wrpVariant = () => {
 		if (position === 'header') {
 			return styles.fixedWrp_header
@@ -22,6 +22,8 @@ const FixedWrp = forwardRef<HTMLDivElement, FixedWrpProps>((
 	const visible = () => {
 		if (!isVisible) {
 			return styles.fixedWrp_overflow
+		}else {
+			return ''
 		}
 	}
 
@@ -30,7 +32,14 @@ const FixedWrp = forwardRef<HTMLDivElement, FixedWrpProps>((
 			<div ref={ref} className={styles.fixedWrp+' '+ wrpVariant() + ' ' + visible()}>
 				{children}
 			</div>
-			<div style={{height: height+margin+'px'}}></div>
+			{
+				position === 'footer'
+					?
+					<div style={{height: height+FIXED_WRP_MARGIN+'px'}}></div>
+					:
+					''
+			}
+
 		</>
 
 	);
