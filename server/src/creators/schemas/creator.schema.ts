@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import * as paginate from "mongoose-paginate-v2";
 
 export type CreatorDocument = Creator & Document;
 
@@ -30,3 +31,4 @@ export class Creator {
 }
 
 export const CreatorSchema = SchemaFactory.createForClass(Creator);
+CreatorSchema.plugin(paginate)
