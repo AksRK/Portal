@@ -1,19 +1,18 @@
 import '@/core/styles/globals.scss'
 import 'react-toastify/dist/ReactToastify.css';
 import 'suneditor/dist/css/suneditor.min.css';
-
-import type { AppProps } from 'next/app'
 import {useContext, useEffect} from "react";
 import StoreProvider, {Context} from "@/components/StoreProvider";
 
-import {useRouter} from "next/router";
 import RouteProvider from "@/components/RouteProvider";
+import {useRouter} from "next/router";
+import {AppProps} from "next/app";
 
 
 
-export default function App({ Component, pageProps }: AppProps) {
+
+const App = ({ Component, pageProps }:AppProps) => {
     const {store} = useContext(Context)
-    const router = useRouter()
 
     useEffect(() => {
         if (localStorage.getItem('accessToken')) {
@@ -21,11 +20,15 @@ export default function App({ Component, pageProps }: AppProps) {
         }
     }, [])
 
+    const router = useRouter()
+    const pageKey = router.asPath
+
     return (
         <StoreProvider>
             <RouteProvider>
-                <Component {...pageProps} />
+                <Component key={pageKey} {...pageProps} />
             </RouteProvider>
         </StoreProvider>
     )
 }
+export default App;
