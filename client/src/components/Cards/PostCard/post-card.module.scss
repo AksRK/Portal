@@ -1,0 +1,19 @@
+.postCard {
+  height: 805px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  &__imgWrp {
+    width: 100%;
+    min-height: 513px;
+    position: relative;
+  }
+
+  &__catWrp {
+    width: fit-content;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+  }
+}

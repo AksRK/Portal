@@ -1,0 +1,12 @@
+.creatorCard {
+  height: 613px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  &__imgWrp {
+    width: 100%;
+    min-height: 380px;
+    position: relative;
+  }
+}
