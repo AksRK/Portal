@@ -1,8 +1,57 @@
 .header {
+  position: relative;
   width: 100%;
   max-width: 1633px;
-  height: 100px;
-  background: #428bce;
-  //margin: 0 auto 50px auto;
   margin: 0 auto;
+  color: #FAFAFA;
+  padding: 30px 30px 35px 30px;
+
+  &_z_index_10 {
+    z-index: 10;
+  }
+
+  &__wrp {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 0;
+  }
+
+  &__logoWrp {
+    width: 100%;
+    max-width: 540px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__logo {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__description {
+    width: 100%;
+    max-width: 347px;
+    font-weight: 400;
+    font-size: 15px;
+  }
+
+  &__links {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__burgerMenuBtn {
+    width: fit-content;
+    max-width: 66px;
+    min-width: 34px;
+    transition: all 0.3s ease-in-out;
+  }
 }
