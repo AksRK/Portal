@@ -1,17 +1,24 @@
 import Head from 'next/head'
-import {FC} from "react";
-import CategoryNav from "@/components/CategoryNav";
-import {API_URL} from "@/core/constants";
-import {IHomePageProps, IPostData} from "@/core/types";
-import Link from "next/link";
+import {FC, useContext, useEffect} from "react";
+import {IHomePageProps} from "@/core/types";
+import PaddingWrp from "@/components/UI/PaddingWrp";
+import {Context} from "@/components/StoreProvider";
+import {observer} from "mobx-react-lite";
+import PostService from "@/services/post.service";
+import CardsList from "@/components/UI/CardsList";
+import BlogCategoryService from "@/services/blog-category.service";
 
-const Home:FC<IHomePageProps> = ({categories, posts}) => {
+const Home:FC<IHomePageProps> = ({postsWithPagination, categories}) => {
+    const {store} = useContext(Context)
+    useEffect(() => {
+        store.categoriesStore.saveCategories(categories)
+        store.postStore.savePostsWithPagination(postsWithPagination);
+    }, [postsWithPagination, categories]);
 
-    const addPostHref = (post: IPostData) => {
-        if (!post.category.editable) {
-            return `${post.category.titleUrl}/${post.creator?.nickName}/posts/${post.titleUrl}`
+    const loadMore = async () => {
+        if (store.postStore.postsWithPagination.nextPage) {
+            await store.postStore.loadPostsWithPagination({page:store.postStore.postsWithPagination.nextPage})
         }
-        return `${post.category.titleUrl}/posts/${post.titleUrl}`
     }
 
   return (
@@ -24,39 +31,28 @@ const Home:FC<IHomePageProps> = ({categories, posts}) => {
       </Head>
       <main>
           <div style={{minHeight:'1000px'}}>
-              <CategoryNav categories={categories}/>
-              {
-                posts?.map((post) => {
-                    return(
-                        <>
-                            <div>
-                                <Link href={addPostHref(post)}>
-                                    {post.title}
-                                </Link>
-                                <div>
-                                    {post.viewsCount}
-                                    {post.category.title}
-                                </div>
-                            </div>
-
-
-                        </>
-                    )
-                })
-              }
+              <PaddingWrp size={'small'}>
+                  <CardsList
+                      withTag={true}
+                      data={{posts:store.postStore.postsWithPagination.docs}}
+                      loadMore={store.postStore.postsWithPagination.hasNextPage}
+                      isLoading={store.postStore.isLoading}
+                      onLoadMore={loadMore}/>
+              </PaddingWrp>
           </div>
       </main>
     </>
   )
 }
 
-export default Home;
+export default observer(Home);
 
 export async function getServerSideProps() {
-    const categories = await fetch(`${API_URL}/blog/category/`).then(r => r.json())
-    const posts = await fetch(`${API_URL}/posts/`).then(r => r.json())
-
+    const [categories, postsResponse] = await Promise.all([
+        BlogCategoryService.getALl({fromServer:true}).then((r)=> r.data),
+        PostService.getALl({fromServer: true}).then((r)=> r.data)
+    ])
     return {
-        props: {categories: categories, posts: posts}
+        props: {categories: categories, postsWithPagination: postsResponse}
     }
 }
