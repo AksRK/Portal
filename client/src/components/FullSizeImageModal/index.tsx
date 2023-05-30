@@ -1,12 +1,12 @@
 import {FC} from "react";
-import {FullSizeImageModalProps} from "@/core/types";
+import {TFullSizeImageModalProps} from "@/core/types";
 import {Backdrop, Fade, Modal} from "@mui/material";
 import Box from "@mui/material/Box";
 import * as React from "react";
 import styles from './full-size-image-modal.module.scss'
 
 
-const FullSizeImageModal:FC<FullSizeImageModalProps> = ({state, setState, imgUrl, imageId}) => {
+const FullSizeImageModal:FC<TFullSizeImageModalProps> = ({state, setState, imgUrl, imageId}) => {
 	if (!imgUrl && !imageId) {
 		return <></>
 	}
@@ -27,7 +27,7 @@ const FullSizeImageModal:FC<FullSizeImageModalProps> = ({state, setState, imgUrl
 				<Box>
 					<div className={styles.fullSizeImgWrp}>
 						{imgUrl && (
-							<img src={imgUrl} alt={imgUrl}/>
+							<img src={imgUrl} alt={imgUrl} onClick={()=> setState(false)}/>
 						)}
 					</div>
 				</Box>
