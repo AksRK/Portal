@@ -4,7 +4,9 @@ import BlogCategoryService from "@/services/blog-category.service";
 import {TextField} from "@mui/material";
 import { useForm } from "react-hook-form";
 import {Alert} from "@/core/utils/alert.utils";
-import {ICategoryBlogData, CategoryFormData} from "@/core/types";
+import {ICategoryBlogData, ICategoryFormData} from "@/core/types";
+import Button from "@/components/UI/Button";
+import FlexBox from "@/components/UI/FlexBox";
 
 const Category = () => {
 	const [categories, setCategories] = useState<ICategoryBlogData[]>([])
@@ -12,9 +14,9 @@ const Category = () => {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<CategoryFormData>();
+	} = useForm<ICategoryFormData>();
 	const getAllCategories = async () => {
-		await BlogCategoryService.getALl()
+		await BlogCategoryService.getALl({})
 			.then((response) => {
 				setCategories(response.data)
 			}).catch((error) => {
@@ -22,8 +24,8 @@ const Category = () => {
 			})
 	}
 
-	const addNewCategory = async (data:CategoryFormData) => {
-		await BlogCategoryService.addNew(data)
+	const addNewCategory = async (data:ICategoryFormData) => {
+		await BlogCategoryService.create(data)
 			.then((response) => {
 				getAllCategories()
 				Alert({ msg: `Категория ${response.data.title} создана`, type: 'success' });
@@ -57,7 +59,7 @@ const Category = () => {
 	}
 
 	 const getOneById = async (id:string) => {
-		return BlogCategoryService.getOneById(id)
+		return BlogCategoryService.getOne({id: id})
 			.then((response) => {
 				return {data: response.data};
 			})
@@ -71,13 +73,25 @@ const Category = () => {
 	}, [])
 
 	return (
-		<div style={{padding:'20px'}}>
-			<form onSubmit={handleSubmit(addNewCategory)}>
-				<TextField id="outlined-basic" label="Название категории" variant="outlined" {...register("title", {required: true, maxLength: 80})}/>
-				<input type="submit" value={'Отправить'}/>
-			</form>
-			<CategoryTable categories={categories} onDelete={removeCategory} onUpdate={updateCategory} getOne={getOneById}/>
-		</div>
+		<>
+			<FlexBox justifyContent={"flex-start"}>
+				<form onSubmit={handleSubmit(addNewCategory)}>
+					<FlexBox justifyContent={"flex-start"} alignItems={"center"}>
+						<TextField
+							style={{ width: '100%' }}
+							id="outlined-basic"
+							placeholder={'Название категории'}
+							label="Добавить новую категорию"
+							variant="outlined"
+							{...register("title", {required: true, maxLength: 80})}/>
+						<Button>
+							Добавить категорию
+						</Button>
+					</FlexBox>
+				</form>
+				<CategoryTable categories={categories} onDelete={removeCategory} onUpdate={updateCategory} getOne={getOneById}/>
+			</FlexBox>
+		</>
 	);
 };
 
